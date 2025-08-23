@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define size 10
+#define MAX 10
 
 typedef struct{
-    int elem[size];
+    int elem[MAX];
     int count;
 } List;
 
@@ -35,7 +35,7 @@ int main(){
     L = deletePos(L, 7);
     displayList(L);
 
-    for(i=0; i<size/2; i++){
+    for(i=0; i<MAX/2; i++){
         pos = locate(L, i);
         if (pos != -1){
             printf("%d located at position %d.\n", i, pos);
@@ -59,7 +59,7 @@ List initialize(List L){
 }
 
 List insertPos(List L, int data, int pos){
-    if (L.count == size){
+    if (L.count == MAX){
         printf("List is full!\n");
         return L;
     }
@@ -81,7 +81,7 @@ List insertPos(List L, int data, int pos){
 }
 
 List deletePos(List L, int pos){
-    if (pos > L.count || pos < 0){
+    if (pos >= L.count || pos < 0){
         printf("Cannot delete! Valid positions 0-%d only.\n", L.count);
         return L;
     }
@@ -106,7 +106,7 @@ int locate(List L, int data){
 }
 
 List insertSorted(List L, int data){
-    if (L.count == size){
+    if (L.count == MAX){
         printf("List is full!\n");
         return L;
     }
