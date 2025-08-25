@@ -113,16 +113,13 @@ List insertSorted(List L, int data){
 
     int pos = 0;
     while (pos < L.count && L.elem[pos] < data) pos++;
-    for (int j = L.count - 1; j >= pos; j--) L.elem[j+1] = L.elem[j];
     
-    L.elem[pos] = data;
-    L.count++;
-    printf("Inserted %d at position %d.\n", data, pos);
+    L = insertPos(L, data, pos);
     return L;
 }
 
 void displayList(List L){
-    printf("\nUpdated List: ");
+    printf("Updated List: ");
     for(int i=0; i<L.count;i++){
         printf("%d ", L.elem[i]);
     }

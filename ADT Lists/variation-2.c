@@ -6,7 +6,7 @@
 typedef struct Eptr{
     int elem[MAX];
     int count;
-} *Eptr;
+} Etype, *Eptr;
 
 void initialize(Eptr);
 void insertPos(Eptr, int, int);
@@ -15,14 +15,12 @@ int locate(Eptr, int);
 int retrieve(Eptr, int);
 void insertSorted(Eptr, int);
 void displayList(Eptr);
-void makeNULL(Eptr*);
+void makeNULL(Eptr);
 
 int main(){
     int pos, elem, i;
-    Eptr L = malloc(MAXof(*L));
+    Eptr L = (Eptr)malloc(sizeof(Etype));
     initialize(L);
-
-    printf("%d", L->count);
 
     insertPos(L, 2, 0);
     insertPos(L, 1, 0);
@@ -40,7 +38,6 @@ int main(){
     deletePos(L, 7);
     displayList(L);
 
-    printf("LOCATING BY POSITION:\n");
     for(i=0; i<MAX/2; i++){
         pos = locate(L, i);
         if (pos != -1){
@@ -49,8 +46,8 @@ int main(){
             printf("%d not in list!\n", i);
         }
     }
+    printf("\n");
 
-    printf("\nLOCATING BY DATA:\n");
     for(int i=0; i<MAX/2; i++){
         elem = retrieve(L, i);
         if (elem != -1){
@@ -59,6 +56,7 @@ int main(){
             printf("%d not in list!\n", elem);
         }
     }
+    printf("\n");
 
     insertSorted(L, 3);
     insertSorted(L, 6);
@@ -66,8 +64,7 @@ int main(){
     insertSorted(L, 10);
     displayList(L);
 
-    makeNULL(&L);
-    if (L == NULL) printf("Memory freed!\n");
+    makeNULL(L);
     return 0;
 }
 
@@ -137,22 +134,18 @@ void insertSorted(Eptr L, int data){
 
     int pos = 0;
     while (pos < L->count && L->elem[pos] < data) pos++;
-    for (int j = L->count - 1; j >= pos; j--) L->elem[j+1] = L->elem[j];
     
-    L->elem[pos] = data;
-    L->count++;
-    printf("Inserted %d at position %d.\n", data, pos);
+    insertPos(L, data, pos);
 }
 
 void displayList(Eptr L){
-    printf("\nUpdated List: ");
+    printf("Updated List: ");
     for(int i=0; i<L->count;i++){
         printf("%d ", L->elem[i]);
     }
     printf("\n\n");
 }
 
-void makeNULL(Eptr *L){
-    free(*L);
-    *L = NULL;
+void makeNULL(Eptr L){
+    free(L);
 }
