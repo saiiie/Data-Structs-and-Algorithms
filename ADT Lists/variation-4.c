@@ -58,7 +58,7 @@ int main(){
 }
 
 void initialize(List* L){
-    L->elemPTR = NULL;
+    L->elemPTR = (int*)malloc(sizeof(int) * LENGTH);
     L->count = 0;
     L->max = LENGTH;
 }
@@ -77,7 +77,7 @@ void insertPos(List* L, int data, int pos){
 }
 
 void deletePos(List* L, int pos){
-    if (pos > L->count) return;
+    if (pos >= L->count) return;
 
     for (int i=pos; i<L->count; i++){
         L->elemPTR[i] = L->elemPTR[i+1];
@@ -88,7 +88,7 @@ void deletePos(List* L, int pos){
 }
 
 int locate(List* L, int data){
-    for (int i=0; i<L->count; i++){
+    for (int i = 0; i < L->count; i++){
         if (L->elemPTR[i] == data){
             return i;
         }
@@ -97,7 +97,7 @@ int locate(List* L, int data){
 }
 
 int retrieve(List* L, int pos){
-    if (pos > L->count) return;
+    if (pos >= L->count) return -1;
     return L->elemPTR[pos];
 }
 
@@ -125,5 +125,6 @@ void resize(List* L){
 }
 
 void makeNULL(List* L){
+    free(L->elemPTR);
     free(L);
 }
