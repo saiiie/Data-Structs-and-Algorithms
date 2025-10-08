@@ -1,108 +1,129 @@
+// ARRAY Queues Variation 1
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-#define MAX 10
+#include <stdlib.h>
+#define MAX 5
 
-typedef struct{
+// separate struct for List
+typedef struct {
     int items[MAX];
+    int count;
+} List;
+
+// struct for Queue
+typedef struct {
+    List list;
     int front;
     int rear;
 } Queue;
 
-Queue* initialize();
-bool isFull(Queue*);
-bool isEmpty(Queue*);
-void enqueue(Queue*, int);
-int dequeue(Queue*);
-int front(Queue*);
-void display(Queue*);
-
-int main(){
-    Queue* q = initialize();
-
-    printf("=== Enqueueing elements ===\n");
-    for (int i = 1; i <= 5; i++) {
-        enqueue(q, i * 10);
-        display(q);
-    }
-
-    printf("\n=== Dequeueing two elements ===\n");
-    printf("Dequeued: %d\n", dequeue(q));
-    printf("Dequeued: %d\n", dequeue(q));
-    display(q);
-
-    printf("\n=== Test Wraparound ===\n");
-    enqueue(q, 60);
-    enqueue(q, 70);
-    display(q);
-
-    printf("\n=== Peek front element ===\n");
-    printf("Front: %d\n", front(q));
-
-    printf("\n=== Dequeueing all elements ===\n");
-    while (!isEmpty(q)) {
-        printf("Dequeued: %d\n", dequeue(q));
-        display(q);
-    }
-
-    printf("\nFinal state:\n");
-    display(q);
-
-    free(q);
-    return 0;
-}
-
-Queue* initialize(){
+// initialize the queue
+Queue* init() {
     Queue* q = (Queue*)malloc(sizeof(Queue));
-    q->front = 1;
-    q->rear = 0;
+    q->front = q->rear = -1;
+    q->list.count = 0;
     return q;
 }
 
-bool isFull(Queue* q){
-    if (q->front == (q->rear + 1) % MAX) return true;
-    return false;
+bool isEmpty(Queue* q) {
+    return (q->list.count == 0);
 }
 
-bool isEmpty(Queue* q){
-    if (q->front == (q->rear + 2) % MAX) return true;
-    return false;
+bool isFull(Queue* q) {
+    return (q->list.count == MAX);
 }
 
-void enqueue(Queue* q, int value){
+void enqueue(Queue* q, int value) {
     if (isFull(q)){
         printf("Queue is full.\n");
         return;
     }
-
-    q->rear = (q->rear + 1) % MAX;
-    q->items[q->rear] = value;
+    
+    
+    if (isEmpty(q)) {
+        // handles case for empty queue, so front gets updated correctly
+        q->front = 0;
+        q->rear = 0;
+    } else {
+        // else, increment rear to next index
+        q->rear = (q->rear + 1) % MAX;
+    }
+    
+    // assignment of value to rear index 
+    q->list.items[q->rear] = value;
+    q->list.count++;
 }
 
-int dequeue(Queue* q){
+int dequeue(Queue* q) {
     if (isEmpty(q)) return -1;
-
-    int value = q->items[q->front];
-    q->front = (q->front + 1) % MAX;
-    return value;
+    
+    // stores number to be dequeued
+    int ret = q->list.items[q->front];
+    
+    if (q->front == q->rear) {
+        // handles case for when queue has only one element left, so queue can reset correctly
+        q->front = q->rear = -1;
+    } else {
+        // else, increment front to the next index
+        q->front = (q->front + 1) % MAX;
+    }
+    
+    // decrement count and return stored number
+    q->list.count--;
+    return ret;
 }
 
-int front(Queue* q){
+int front(Queue* q) {
     if (isEmpty(q)) return -1;
-    return q->items[q->front];
+    return q->list.items[q->front];
 }
 
-void display(Queue* q){
+// display queue with NO accessing of index
+void display(Queue* q) {
     if (isEmpty(q)){
         printf("Queue is empty.\n");
         return;
     }
-
-    int i = q->front;
-    while (i != (q->rear + 1) % MAX) {
-        printf("%d ", q->items[i]);
-        i = (i + 1) % MAX;
+    
+    printf("Queue: ");
+    // dequeues to display and enqueues to restore until count has been met
+    for (int i = 0; i < q->list.count; i++){
+        int temp = dequeue(q);
+        printf("%d ", temp);
+        enqueue(q, temp);
     }
+    
+    printf("\n\n");
+}
 
-    printf("\n");
+int main(){
+    Queue* q = init();
+    
+    enqueue(q, 10);
+    enqueue(q, 20);
+    enqueue(q, 30);
+    enqueue(q, 40);
+    enqueue(q, 50);
+    
+    display(q);  // Expected: 10 20 30 40 50
+
+    printf("Dequeued: %d\n", dequeue(q)); // Expected: 10
+    printf("Dequeued: %d\n", dequeue(q)); // Expected: 20
+    
+    display(q);  // Expected: 30 40 50
+
+    enqueue(q, 60);
+    enqueue(q, 70);  // should wrap around
+    
+    display(q);  // Expected: 30 40 50 60 70
+    
+    printf("Front element: %d\n", front(q)); // Expected: 30
+
+    while (!isEmpty(q)) {
+        printf("Dequeued: %d\n", dequeue(q));
+    }
+    
+    display(q);  // Expected: Queue is empty.
+    
+    return 0;
 }

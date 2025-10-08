@@ -94,7 +94,7 @@ int dequeue(Queue* q){
     q->front = q->front->next;
 
     if (isEmpty(q)){
-        q->rear->next = NULL;
+        q->rear = NULL;
     }
 
     free(temp);
