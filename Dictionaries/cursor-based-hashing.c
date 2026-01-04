@@ -49,7 +49,7 @@ bool insert(Dictionary* D, char code[], char city[]){
     }
     
     else { // case for when slot is not empty
-            if (D->avail == -1) return false;
+        if (D->avail == -1) return false;
 
         int cell = D->avail;
         D->avail = D->data[cell].next;
